@@ -166,10 +166,7 @@ article .body p {
     color: #333;
     line-height: 21px;
     margin-bottom: 21px;
-}
-
-article .body p a {
-    font-weight: bold;
+    font-size: 13px;
 }
 
 article .body ul {
