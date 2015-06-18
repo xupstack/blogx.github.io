@@ -34,7 +34,7 @@ article > .meta {
     margin-bottom: 10px;
 }
 
-header, footer, nav, article, section, div {
+header {
     display: block;
     overflow: hidden;
 }
@@ -79,15 +79,16 @@ code {
 pre {
     background-color: #eaf7ff;
     border: 1px solid #d1e3ef;
-    border-radius: 10px;
+    border-radius: 4px;
     color: #003153;
-    margin-top: 20px;
+    margin-bottom: 21px;
     overflow-x: auto;
-    padding: 10px 20px;
+    padding: 5px 10px;
+	font-size: 13px;
 }
 
 pre code {
-    font-size: 15px;
+    font-size: 13px;
 }
 
 .container {
@@ -128,6 +129,7 @@ header .logo {
 
 .content article {
     margin-bottom: 60px;
+    overflow: inherit;
 }
 
 .paginator {
@@ -139,7 +141,7 @@ article > header time {
 }
 
 article .body {
-    font-size: 16px;
+    font-size: 13px;
 /*            columns: 320px auto;
        -moz-columns: 320px auto;
     -webkit-columns: 320px auto;
@@ -159,6 +161,13 @@ article .body h4 {
     border-bottom: 1px #ddd solid;
     color: #2a5e82;
     font-size: 18px;
+    margin: 20px 0;
+}
+
+article .body h5 {
+    border-bottom: 1px #ddd solid;
+    color: #2a5e82;
+    font-size: 16px;
     margin: 20px 0;
 }
 
