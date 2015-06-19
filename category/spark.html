@@ -18,32 +18,21 @@
     </header>
 
     <div class="container content">
-    <article>
-        <header>
-<h2><a href="/how-to-tune-your-apache-spark-jobs-part-1.html" rel="bookmark">
-    [翻译] Apache Spark性能调优（一）
-</a></h2>
-<span class="meta">
-    <time datetime="2015-06-16 00:00:00" pubdate>Posted on
-        2015-06-16
-    </time>
-    <address class="vcard author">
-        by <a class="url fn" href="/author/will-yang.html">
-        Will Yang</a>
-    </address>
-</span>        </header>
-
-        <div class="body">
-            <p>原编者注：“<a href="http://spark-summit.org/east/2015/talk/estimating-financial-risk-with-spark">Estimating Financial Risk with Spark</a>”是原文作者Sandy在Spark Summit East 2015的一个演讲，内附视频和演讲的内容。</p>
-<p>当你在编写Spark程序时，需要理解transformation、action和RDD，它们是编写Spark程序的基础。然而当你发现任务失败，或者从打算从Spark的web UI去查找任务运行太慢的原因时，你会发现你还需要理解job、stage和task，它们对于写出“好”的、“快”的Spark程序至关重要。只有理解了Spark的底层运行机制，才能在不同场景下写出高效的程序。</p>
-<p>通过这篇文章，你可以了解Spark程序是如何在集群上执行的，文章最后会给出一些如何写出高效Spark程序的实用样例。</p>
-<h5>你的Spark程序是怎样执行的</h5>
-<p>一个Spark程序的运行需要一个driver进程和一组分散在集群节点上的executor进程。</p>
-<p>Driver进程负责控制任务的总体流程，而executor进程则是负责以task的形式来执行任务，同时存储用户选择cache的任何数据。Driver进程和executor进程一般都是常驻在整个程序运行的生命周期的，然而"<a href="http://spark.apache.org/docs/1.2.0/job-scheduling.html#dynamic-resource-allocation">dynamic resource allocation</a>"实现了动态分配executor。每个executor都有一定数量的slots（槽位）来执行task，并且在executor的整个生命周期中，多个task是可以并行执行的。虽然集群上的具体处理过程会跟所使用的集群管理系统有关（YARN、Mesos、Spark ...</p>
-        </div>
-
-
-    </article>
+    <div class="article_list">
+        <article>
+            <header>
+                <a href="/how-to-tune-your-apache-spark-jobs-part-1.html" rel="bookmark">
+                    [翻译] Apache Spark性能调优（一）
+                </a>
+                <div>
+                    <span>作者：<a class="url fn" href="/author/will-yang.html">
+                    Will Yang</a></span>
+                    <span>分类：<a href="/category/spark.html">Spark</a></span>
+                    <span>时间：2015-06-16</span>
+                </div>
+            </header>
+        </article>
+    </div>
     </div>
 
     <!--<div class="bottom">

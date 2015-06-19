@@ -25,13 +25,42 @@ article > header > h2 {
     white-space: nowrap;
     text-overflow: ellipsis;
     margin-bottom: 1px;
-    float: left;
 }
 
-article > .meta {
+.meta {
     color: #6e6e6e;
     font-size: 13px;
-    margin-bottom: 10px;
+    margin: 15px 0 5px;
+}
+
+.content .article_list article {
+    color: #888;
+    padding: 5px 0;
+    border-bottom: 1px solid #E4E4E4;
+    margin-bottom: 0;
+    overflow: inherit;
+}
+
+.content .article_list article header {
+    margin: 1px 0 1px;
+}
+
+.content .article_list article header div {
+    display: block;
+    color: #6e6e6e;
+    font-size: 12px;
+}
+
+.content .article_list article header div span {
+    margin-right: 15px;
+}
+
+.content .article_list article header div a {
+    color: #6e6e6e;
+}
+
+.content .article_list article header div {
+    margin: 3px 0 0;
 }
 
 header {
