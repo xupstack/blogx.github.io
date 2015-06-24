@@ -13,6 +13,10 @@ a:hover {
     text-decoration: underline;
 }
 
+.body a {
+    color: #3b73af;
+}
+
 ul {
     list-style-type: none;
 }
