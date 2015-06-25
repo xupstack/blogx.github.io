@@ -5,7 +5,7 @@
     <meta charset="utf-8">
         <title>[翻译] Apache Spark性能调优（二）</title>
         <meta charset="utf-8" />
-        <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Serif:700|Source+Code+Pro:400,700' rel='stylesheet' type='text/css'>
+        <!--<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Serif:700|Source+Code+Pro:400,700' rel='stylesheet' type='text/css'>-->
         <link rel="stylesheet" href="/theme/style/reset.css" type="text/css" />
         <link rel="stylesheet" href="/theme/style/screen.css" type="text/css" />
         <link rel="stylesheet" href="/theme/style/print.css" type="text/css" media="print" />
@@ -104,46 +104,8 @@
 <p>Task数量太少同时还意味着每个task中的所有聚合操作（aggregation）都面临更大的内存压力。所有join、cogroup、*ByKey操作都涉及到将一些对象放到hashmaps或in-memory buffers中，以做分组或排序。join、cogroup、groupByKey在</p>
     </div>
 
-    <!--    <footer>
-        <ul class="tags">            <li>
-                <a href="/tag/spark.html">Spark</a>
-            </li>            <li>
-                <a href="/tag/yarn.html">YARN</a>
-            </li>            <li>
-                <a href="/tag/tuning.html">Tuning</a>
-            </li>        </ul>
-    </footer>
--->
-
 </article>
     </div>
-
-    <!--<div class="bottom">
-        <div class="container">
-            <div class="about">
-                <h3>About me</h3>
-                <img alt="Me!" class="avatar"
-                     src="http://www.gravatar.com/avatar/?size=64">
-                <p></p>
-                <p>
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <div class="container footer">
-            <span>Powered by <a href="http://docs.getpelican.com">
-                Pelican</a> using <a href="https://github.com/BYK/pelican-neat">
-                neat theme</a>.
-            </span>
-            <nav>
-                <ul>
-                    <li><a href="/archives.html" title="Archive"><strong>Archive</strong></a></li>
-                </ul>
-            </nav>
-        </div>
-    </footer>-->
 
 </body>
 </html>

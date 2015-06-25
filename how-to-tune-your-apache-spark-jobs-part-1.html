@@ -5,7 +5,7 @@
     <meta charset="utf-8">
         <title>[翻译] Apache Spark性能调优（一）</title>
         <meta charset="utf-8" />
-        <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Serif:700|Source+Code+Pro:400,700' rel='stylesheet' type='text/css'>
+        <!--<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Serif:700|Source+Code+Pro:400,700' rel='stylesheet' type='text/css'>-->
         <link rel="stylesheet" href="/theme/style/reset.css" type="text/css" />
         <link rel="stylesheet" href="/theme/style/screen.css" type="text/css" />
         <link rel="stylesheet" href="/theme/style/print.css" type="text/css" media="print" />
@@ -54,10 +54,10 @@ sc.textFile("someFile.txt").
 <p>相反的，看看下面这段代码，目标是在文本文件中出现次数大等于1000的单词中，找出每个字符出现的次数。</p>
 <pre>
 val tokenized = sc.textFile(args(0)).flatMap(_.split(' '))
-val wordCounts = tokenized.map((\_, 1)).reduceByKey(\_ + \_)
-val filtered = wordCounts.filter(\_.\_2 >= 1000)
-val charCounts = filtered.flatMap(\_.\_1.toCharArray).map((\_, 1)).
-  reduceByKey(\_ + \_)
+val wordCounts = tokenized.map((_, 1)).reduceByKey(_ + _)
+val filtered = wordCounts.filter(_._2 >= 1000)
+val charCounts = filtered.flatMap(_._1.toCharArray).map((_, 1)).
+  reduceByKey(_ + _)
 charCounts.collect()
 </pre>
 
@@ -121,46 +121,8 @@ rdd3 = rdd1.join(rdd2)
 <p>原文作者Sandy Ryza是Cloudera的数据科学家，他同时还为Apache Hadoop和Apache Spark项目贡献代码。他是O’Reilly出版的<a href="http://shop.oreilly.com/product/0636920035091.do">Advanced Analytics with Spark</a>一书的作者之一。</p>
     </div>
 
-    <!--    <footer>
-        <ul class="tags">            <li>
-                <a href="/tag/spark.html">Spark</a>
-            </li>            <li>
-                <a href="/tag/yarn.html">YARN</a>
-            </li>            <li>
-                <a href="/tag/tuning.html">Tuning</a>
-            </li>        </ul>
-    </footer>
--->
-
 </article>
     </div>
-
-    <!--<div class="bottom">
-        <div class="container">
-            <div class="about">
-                <h3>About me</h3>
-                <img alt="Me!" class="avatar"
-                     src="http://www.gravatar.com/avatar/?size=64">
-                <p></p>
-                <p>
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <div class="container footer">
-            <span>Powered by <a href="http://docs.getpelican.com">
-                Pelican</a> using <a href="https://github.com/BYK/pelican-neat">
-                neat theme</a>.
-            </span>
-            <nav>
-                <ul>
-                    <li><a href="/archives.html" title="Archive"><strong>Archive</strong></a></li>
-                </ul>
-            </nav>
-        </div>
-    </footer>-->
 
 </body>
 </html>
