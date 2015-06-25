@@ -37,9 +37,9 @@
 <p>一个Spark应用程序由一个driver进程和一组分散在集群节点上的executor进程组成。</p>
 <p>Driver进程负责控制任务的总体流程，executor进程负责以task的形式来执行任务，同时存储用户需要cache的数据。Driver进程和executor进程一般都是常驻在应用程序的整个运行周期中的（<a href="http://spark.apache.org/docs/1.2.0/job-scheduling.html#dynamic-resource-allocation">dynamic resource allocation</a>实现了动态分配executor）。每个executor都有一定数量的slots（槽位）来执行task，在executor的整个生命周期中多个task是可以并行执行的。虽然集群上的具体处理过程会跟所使用的集群管理系统有关（YARN、Mesos、Spark Standalone），但每个Spark应用程序都有driver和executor。</p>
 <p><img alt="pic1" src="/images/how-to-tune-your-apache-spark-jobs-part-1-f1.png" /></p>
-<p>Job是应用程序执行层级中的第一层，在应用程序里面执行一个action操作即会触发启动一个对应的Spark job。Spark通过检查action所依赖的RDDs来制定执行计划，这个执行计划从“最远”的RDDs（即没有其他依赖的RDDs或者是已经cache的数据）开始，到最后一个需要生成action结果的RDD结束。</p>
+<p>Job是应用程序执行层级中的第一层，在应用程序里面执行一个action操作即会触发启动一个对应的Spark job。Spark通过检查action所依赖的RDDs来制定执行计划，这个执行计划从“最远”的RDDs（即没有其他依赖的RDDs或者是已经{cache的数据?}）开始，到最后一个需要生成action结果的RDD结束。</p>
 <p>执行计划会将job的transformation操作合并成stages。一个stage对应于一组执行同一段代码的task的集合，每个task处理数据的不同子集。每个stage都包含了一系列不需要shuffle所有数据就可以完成的transformations。</p>
-<p>Spark如何确定数据是否需要shuffle呢？一个RDD是由固定数量的分区组成了，每个分区又包含了一定数量的数据记录。对于窄依赖（比如map、filter），计算一个分区的数据只来源于其父RDD的某一个分区，每一条数据记录也只对应于其父RDD中的唯一一条数据记录（特殊的，coalesce这样的transformation虽然可以依赖父RDD的多个分区，但是子RDD的某一个分区只依赖父RDD分区的一个有限的子集，我们仍然认为coalesce是一种窄依赖）。</p>
+<p>Spark如何确定数据是否需要shuffle呢？一个RDD是由固定数量的分区组成了，每个分区又包含了一定数量的数据记录。对于窄依赖（比如map、filter），计算一个分区的数据只来源于其父RDD的某一个分区，每一条数据记录也只对应于其父RDD中的唯一一条数据记录（特殊的，coalesce这样的transformation虽然可以依赖父RDD的多个分区，但是子RDD的某一个分区只依赖父RDD的有限分区－不需要shuffle所有数据，我们仍然认为coalesce是一种窄依赖）。</p>
 <p>Spark还有另一种transformation称作宽依赖（比如groupByKey、reduceByKey），在宽依赖中，计算一个分区所需的数据可能来源于父RDD的多个分区。所有key相同的数据都需要被放到同一个分区中，且由同一个task来处理，为了实现这样的操作，Spark就需要执行shuffle，即让数据在集群中传输并最终落到一个新的stage和一些新的分区中。</p>
 <p>看下面的这段代码：</p>
 <pre>
@@ -54,37 +54,37 @@ sc.textFile("someFile.txt").
 <p>相反的，看看下面这段代码，目标是在文本文件中出现次数大等于1000的单词中，找出每个字符出现的次数。</p>
 <pre>
 val tokenized = sc.textFile(args(0)).flatMap(_.split(' '))
-val wordCounts = tokenized.map((_, 1)).reduceByKey(_ + _)
-val filtered = wordCounts.filter(_._2 >= 1000)
-val charCounts = filtered.flatMap(_._1.toCharArray).map((_, 1)).
-  reduceByKey(_ + _)
+val wordCounts = tokenized.map((\_, 1)).reduceByKey(\_ + \_)
+val filtered = wordCounts.filter(\_.\_2 >= 1000)
+val charCounts = filtered.flatMap(\_.\_1.toCharArray).map((\_, 1)).
+  reduceByKey(\_ + \_)
 charCounts.collect()
 </pre>
 
-<p>整个过程可以划分为三个stages。ReduceByKey是stage的边界，因为计算reduceByKey的结果需要按照key对数据进程重新分区。</p>
+<p>整个过程可以划分为三个stages。reduceByKey是stage的边界，因为计算reduceByKey的结果需要按照key对数据进程重新分区。</p>
 <p>下图是一个更为复杂的转换图，包含了一个join操作。</p>
 <p><img alt="pic2" src="/images/how-to-tune-your-apache-spark-jobs-part-1-f2.png" /></p>
 <p>见下图，粉色方框的部分是上图的stage划分。</p>
 <p><img alt="pic3" src="/images/how-to-tune-your-apache-spark-jobs-part-1-f3.png" /></p>
-<p>在每一个stage边界上，数据会被父stages的任务写到磁盘（译者注：本地磁盘），然后子stage的task再通过网络拉取这些数据。由于stage边界会产生大量的磁盘和网络IO，stage边界是昂贵的，应当尽量避免。父stage的数据分区数量跟子stage的数据分区数量可能是不一样的。触发stage边界的transformation操作（比如reduceByKey）一般都接受numPartitions这个参数，以让开发人员可以决定给子stage的数据划分多少个分区。</p>
+<p>在每一个stage边界上，数据会被父stages的任务写到磁盘（译者注：本地磁盘），然后子stage的task再通过网络拉取这些数据。由于stage边界会产生大量的磁盘和网络I/O，stage边界是昂贵的，应当尽量避免。父stage的数据分区数量跟子stage的数据分区数量可能是不一样的。触发stage边界的transformation操作（比如reduceByKey）一般都接受numPartitions这个参数，以让开发人员可以决定给子stage的数据划分多少个分区。</p>
 <p>在MapReduce的任务调优中，reducer的个数是一个重要参数，类似的，在Spark中，stage边界的分区数量调优通常也能对程序的性能起到关键性作用。在<a href="/how-to-tune-your-apache-spark-jobs-part-2.html">Apache Spark性能调优（二）</a>中我们会深入探讨该数量的调优。</p>
 <h5>选择正确的操作</h5>
 <p>当一个开发人员尝试用Spark解决一个问题时，可以选择不同的actions和transformations的组合来得到想要的结果。然而并非所有的实现都具有相同的性能：避开一些常规的陷阱，选择一种正确的实现，往往可以让程序的执行效率完全不同。对于怎样选择合适的actions和transformations，一些规则可以给你指明方向。</p>
 <p>近期<a href="https://issues.apache.org/jira/browse/SPARK-5097">SPARK-5097</a>的一些工作让SchemaRDD逐渐稳定，这将向开发人员开放Spark的Catalyst优化程序，Spark可以自动选择使用那些更优的操作。待SchemaRDD成为Spark的一个稳定组件之后，对于开发者来说，某些操作的选择将是透明的。</p>
-<p>选择合适的操作组合，主要的目的就是减少shuffle的次数和数据量，这是因为shuffle往往是昂贵的，所有的shuffle数据都必须写磁盘和走网络传输。Repartition、join、cogroup，以及任何*by、*ByKey的transformation都会产生shuffle。并非所有的操作都具有相同的性能，新手Spark开发者常常遇到的性能陷阱是选择了错误的操作。选择合适的操作通常有以下几个规则：</p>
+<p>选择合适的操作组合，主要的目的就是减少shuffle的次数和数据量，这是因为shuffle往往是昂贵的，所有的shuffle数据都必须写磁盘和走网络传输。repartition、join、cogroup，以及任何*by、*ByKey的transformation都会产生shuffle。并非所有的操作都具有相同的性能，新手Spark开发者常常遇到的性能陷阱是选择了错误的操作。选择合适的操作通常有以下几个规则：</p>
 <ul>
 <li>
-<p>在做组合归约时，避免使用groupByKey。例如，rdd.groupByKey().mapValues(<em>.sum)跟rdd.reduceByKey(</em> + _)可以得到一样的结果，但是前者会让所有数据走网络传输，而后者会在每个分区中，对每个key先算出本地sum，然后在shuffle之后，使用这些本地sum计算全局sum。</p>
+<p>在做组合归约时，避免使用groupByKey。例如，rdd.groupByKey().mapValues(_.sum)跟rdd.reduceByKey(_ + _)可以得到一样的结果，但是前者会让所有数据走网络传输，而后者会在每个分区中，对每个key先算出本地sum，然后在shuffle之后，使用这些本地sum计算全局sum。</p>
 </li>
 <li>
 <p>当输入和输出的数据类型不同时，避免使用reduceByKey。例如，想要找出每个key对应的不重复字符串，一种方法是用map操作将每条数据转换成一个Set，然后用reduceByKey来合并这些Sets：
 <pre>
-rdd.map(kv =&gt; (kv.<em>1, new Set<a href="">String</a> + kv._2))
-    .reduceByKey(</em> ++ _)
+rdd.map(kv =&gt; (kv._1, new Set[String]() + kv._2))
+    .reduceByKey(_ ++ _)
 </pre>
 <p>这段代码会产生大量的不必要的对象，因为每一条记录都会产生新的set对象。更好的方式是使用aggregateByKey，它可以更高效的处理map-side的累计：</p>
 <pre>
-val zero = new collection.mutable.Set<a href="">String</a>
+val zero = new collection.mutable.Set[String]()
 rdd.aggregateByKey(zero)(
     (set, v) =&gt; set += v,
     (set1, set2) =&gt; set1 ++= set2)

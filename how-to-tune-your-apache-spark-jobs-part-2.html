@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+        <title>[翻译] Apache Spark性能调优（二）</title>
+        <meta charset="utf-8" />
+        <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Serif:700|Source+Code+Pro:400,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/theme/style/reset.css" type="text/css" />
+        <link rel="stylesheet" href="/theme/style/screen.css" type="text/css" />
+        <link rel="stylesheet" href="/theme/style/print.css" type="text/css" media="print" />
+        <!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+<body>
+    <header class="main">
+        <a class="logo" href="/index.html" title="Home">商业技术团队</a>
+        <span class="tagline"></span>
+    </header>
+
+    <div class="container content">
+<article>
+    <header>
+<h2><a href="/how-to-tune-your-apache-spark-jobs-part-2.html" rel="bookmark">
+    [翻译] Apache Spark性能调优（二）
+</a></h2>
+<div class="meta">
+    <p>作者：<a href="/author/yang-wen-hua.html">杨文华</a></p>
+    <p>分类：<a href="/category/spark.html">Spark</a></p>
+    <p>日期：2015-06-24</p>
+</div>    </header>
+
+    <div class="body">
+        <p>这篇文章是Apache Spark性能调优的第二部分，延续<a href="/how-to-tune-your-apache-spark-jobs-part-1.html">Apache Spark性能调优（一）</a>。本文尝试涵盖几乎所有让Spark程序高效运行的问题。首先，你会学习资源调优，或者说通过配置，最大限度的利用Spark集群提供的所有资源；然后会学习并行调优，并行度是影响job性能的调优最困难同时也是最重要的参数；最后你会学到数据本身的表现形式，存储在磁盘上供Spark读取的形式，以及在内存中作为cache或者传输的形式。</p>
+<h5>资源分配调优</h5>
+<p>在Spark用户邮件组里面充斥着类似这样的一些问题：“我有一个500个节点的Spark集群，但是当我跑一个应用程序时，只有两个tasks同时执行，不应该啊，怎么破？”。考虑到Spark有如此多的参数来控制Spark集群资源的使用，产生这些问题也还算不合理。在这一部分，你可以学习怎样尽可能多的使用Spark集群的所有资源（榨干你的Spark集群）。不同的集群管理系统（YARN、Mesos、Spark Standalone）的推荐配置会有一些差别，这里我们只关注YARN，Cloudera也建议所有用户使用YARN。</p>
+<p>选择YARN的背景以及在YARN上运行Spark的更详细资料可以参见<a href="http://blog.cloudera.com/blog/2014/05/apache-spark-resource-management-and-yarn-app-models/">Apache Spark Resource Management and YARN App Models</a>。</p>
+<p>Spark（以及YARN）关注的最主要的两个资源试CPU和内存。磁盘和网络I/O当然也是影响Spark性能的一部分因素，但是Spark和YARN目前在这方面都没有什么动作。</p>
+<p>Spark应用程序的每个executor都有相同的固定的CPU核数，以及相同的固定的堆（heap）大小。在执行spark-submit, spark-shell, 和pyspark时，CPU核数可以通过--executor-cores来指定；CPU核数也可以通过在spark-defaults.conf文件或者SparkConf对象中设置spark.executor.cores来指定。类似的，堆大小也可以通过--executor-memory（译者注：原文这里应该是笔误写成了--executor-cores）或者spark.executor.memory来指定。CPU核数控制每个executor可以并行运行的task数量。设置“--executor-cores 5”意思是每个executor最多可以同时跑5个任务。堆大小（spark.executor.memory）影响Spark能够cache的数据量，同时影响用于做grouping、aggregations、joins时产生的shuffle的数据结构的大小。</p>
+<p>可以通过设置--num-executors或者spark.executor.instances来控制申请的executor数量。从CDH 5.4/Spark 1.3开始，如果通过设置spark.dynamicAllocation.enabled属性开启了<a href="https://spark.apache.org/docs/latest/job-scheduling.html#dynamic-resource-allocation">动态分配executor（dynamic allocation）</a>就可以不用自己设置executor数量。动态分配executor可以让一个Spark应用程序在有task积压时申请增加executor，在executor变为idle状态时释放executor。</p>
+<p>考虑Spark申请的资源怎样与YARN的可用资源相适应也是比较重要的。相关的YARN属性如下：</p>
+<ul>
+<li>
+<p>yarn.nodemanager.resource.memory-mb控制一个节点上所有container可用的内存总和。</p>
+</li>
+<li>
+<p>yarn.nodemanager.resource.cpu-vcores控制一个节点上所有container可用的CPU核数总和。</p>
+</li>
+</ul>
+<p>给executor申请5个核（cores）结果是向YARN申请5个虚拟核（virtual cores）。从YARN申请内存会复杂一些：</p>
+<ul>
+<li>
+<p>--executor-memory/spark.executor.memory控制executor的堆大小，但是JVMs同时还会使用一部分的堆外内存，比如interned Strings和direct byte buffers。每个executor最终向YARN申请的总内存还需要加上spark.yarn.executor.memoryOverhead，这个属性的默认值是max(384, 0.07 * spark.executor.memory)，单位是MB。</p>
+</li>
+<li>
+<p>YARN可能会对申请的内存做向上的舍入（round）。YARN的yarn.scheduler.minimum-allocation-mb和yarn.scheduler.increment-allocation-mb属性分别控制了最小分配内存大小和申请的增量大小。</p>
+</li>
+</ul>
+<p>下图显示了Spark和YARN中的内存属性层级（默认不伸缩）：</p>
+<p><img alt="pic1" src="/images/how-to-tune-your-apache-spark-jobs-part-2-f1.png" /></p>
+<p>最后还有其他一些关于Spark executor的配置需要考虑：</p>
+<ul>
+<li>
+<p>应用程序master是一个非executor的container，它负责从YARN申请containers。在yarn-client模式下，master的默认配置是1024MB内存和一个vcore；在yarn-cluster模式下，master同时还会跑driver，这时候配置--driver-memory和--driver-cores属性就比较重要了。</p>
+</li>
+<li>
+<p>给executor配置过多的内存常常会导致过多的垃圾回收。粗略估计，每个executor的内存大小最好不要超过64GB。</p>
+</li>
+<li>
+<p>我注意到HDFS client在大量线程并行操作时会出现一些问题。粗略估计，每个executor并行5个task就可以达到最高的写吞吐量，所以每个executor的核数最好不要超过5个。</p>
+</li>
+<li>
+<p>小executor（比如executor都设置成1核和只足够跑一个task的内存大小）无法利用同一个JVM跑多个task的优势。比如，每个executor都需要复制一份广播变量，很多的小executor会导致广播需要复制很多份。</p>
+</li>
+</ul>
+<p>更具体一些，这里给出一个最大限度的使用集群资源的
+实例：假设你有一个Spark集群，其中6个节点上跑了NodeManagers，每一个节点有16核、64GB内存。假设NodeManager的yarn.nodemanager.resource.memory-mb和yarn.nodemanager.resource.cpu-vcores分别设置成63 * 1024 = 64512MB和15。我们不会给YARN container分配节点所有的机器资源，因为节点的OS和Hadoop daemons还需要占用一些资源。这个例子里面，我们预留1GB和1核给这些系统进程。Cloudera Manager可以帮助自动计算和配置这些YARN属性。</p>
+<p>也许最直接的是设置：--num-executors 6 --executor-cores 15 --executor-memory 63G，但这样是不对的：</p>
+<ul>
+<li>
+<p>63GB加上spark.yarn.executor.memoryOverhead超过了NodeManager的63GB内存限制。</p>
+</li>
+<li>
+<p>master会用掉其中一个节点的一个核，就是说那个节点上容纳不了一个15核的executor。</p>
+</li>
+<li>
+<p>每个executor15个核达不到很好的HDFS I/O吞吐量。</p>
+</li>
+</ul>
+<p>一个较好的配置是：--num-executors 17 --executor-cores 5 --executor-memory 19G。为什么？</p>
+<ul>
+<li>
+<p>这个配置，除了master所在的节点分配了两个executor之外，其他节点都分配了三个executor。</p>
+</li>
+<li>
+<p>--executor-memory是通过(每个节点使用63/3的内存) = 21.  21 * 0.07 = 1.47.  21 – 1.47 ~ 19推导出来的。</p>
+</li>
+</ul>
+<h5>并行化调优</h5>
+<p>读到这里，你应该已经知道Spark是一个并行处理引擎。不过不那么明显的是，Spark并不是一个“神奇”的并行处理引擎，它在一定限制条件下实现最大化的并行。每个Spark的stage包含一定数量的task，这些task是顺序执行的。在Spark调优中，stage中的task数量应当说是影响性能最重要的一个参数了。</p>
+<p>但是这个数量是如何确定的呢？Spark将RDDs合并成stages的方式在<a href="/how-to-tune-your-apache-spark-jobs-part-1.html">前一部分</a>中已经讲过了。快速回顾一下，像repartition、reduceByKey这样的transformation会产生stage边界。一个stage中的task数量等于这个stage中的最后那个RDD的分区数量。一个stage中，一个RDD的分区数量又等于它所依赖的RDD的分区数量，除了几个例外：coalesce允许生成一个分区数比它依赖的RDD少的RDD，union生成一个分区数是它的父RDDs分区数的和的RDD，cartesian生成一个分区数是它的父RDDs分区数的乘积的RDD。</p>
+<p>那没有父RDDs的RDD呢？由textFile或者hadoopFile生成的RDDs，他们的分区数量取决于所使用的底层MapReduce InputFormat。通常一个HDFS block就会生成一个分区。由parallelize生成的RDDs的分区数量，可以在程序中给定，如果没有给定就会使用spark.default.parallelism这个配置的值。</p>
+<p>可以调用rdd.partitions().size()来确定一个RDD中的分区数量。</p>
+<p>一个主要的问题是task的数量过于少。假如task的数量比可用的槽位（slot）少的话，这个stage就不能利用全部可用的CPU。</p>
+<p>Task数量太少同时还意味着每个task中的所有聚合操作（aggregation）都面临更大的内存压力。所有join、cogroup、*ByKey操作都涉及到将一些对象放到hashmaps或in-memory buffers中，以做分组或排序。join、cogroup、groupByKey在</p>
+    </div>
+
+    <!--    <footer>
+        <ul class="tags">            <li>
+                <a href="/tag/spark.html">Spark</a>
+            </li>            <li>
+                <a href="/tag/yarn.html">YARN</a>
+            </li>            <li>
+                <a href="/tag/tuning.html">Tuning</a>
+            </li>        </ul>
+    </footer>
+-->
+
+</article>
+    </div>
+
+    <!--<div class="bottom">
+        <div class="container">
+            <div class="about">
+                <h3>About me</h3>
+                <img alt="Me!" class="avatar"
+                     src="http://www.gravatar.com/avatar/?size=64">
+                <p></p>
+                <p>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container footer">
+            <span>Powered by <a href="http://docs.getpelican.com">
+                Pelican</a> using <a href="https://github.com/BYK/pelican-neat">
+                neat theme</a>.
+            </span>
+            <nav>
+                <ul>
+                    <li><a href="/archives.html" title="Archive"><strong>Archive</strong></a></li>
+                </ul>
+            </nav>
+        </div>
+    </footer>-->
+
+</body>
+</html>

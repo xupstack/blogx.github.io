@@ -211,6 +211,10 @@ article .body p {
     font-size: 13px;
 }
 
+article .body li p {
+    margin-bottom: 10px;
+}
+
 article .body ul {
     display: block;
     list-style: square inside;
