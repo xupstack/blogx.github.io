@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 AUTHOR = u'ectech'
 SITENAME = u'58\u5546\u4e1a\u6280\u672f\u56e2\u961f'
-SITEURL = 'blog'
+SITEURL = 'http://blogx.github.io/blog'
 
 OUTPUT_PATH = 'blog'
 
