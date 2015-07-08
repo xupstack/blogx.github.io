@@ -8,7 +8,7 @@ PELICANOPTS=
 
 BASEDIR=$(pwd)
 INPUTDIR=$BASEDIR/content
-OUTPUTDIR=$BASEDIR/blogx.github.io
+OUTPUTDIR=$BASEDIR/blog
 CONFFILE=$BASEDIR/pelicanconf.py
 
 ###

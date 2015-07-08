@@ -4,7 +4,7 @@ PELICANOPTS=
 
 BASEDIR=$(CURDIR)
 INPUTDIR=$(BASEDIR)/content
-OUTPUTDIR=$(BASEDIR)/blogx.github.io
+OUTPUTDIR=$(BASEDIR)/blog
 CONFFILE=$(BASEDIR)/pelicanconf.py
 PUBLISHCONF=$(BASEDIR)/publishconf.py
 

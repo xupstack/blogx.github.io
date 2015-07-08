@@ -4,9 +4,9 @@ from __future__ import unicode_literals
 
 AUTHOR = u'ectech'
 SITENAME = u'58\u5546\u4e1a\u6280\u672f\u56e2\u961f'
-SITEURL = ''
+SITEURL = 'blog'
 
-OUTPUT_PATH = 'blogx.github.io'
+OUTPUT_PATH = 'blog'
 
 TIMEZONE = 'Asia/Shanghai'
 
