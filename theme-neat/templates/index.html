@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if articles %}
+    {% for article in articles_page.object_list %}
+    <div class="article_list">
+        <article>
+            <header>
+                <a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark">
+                    {{ article.title|striptags }}
+                </a>
+                <div>
+                    <span>作者：<a class="url fn" href="{{ SITEURL }}/{{ article.author.url }}">
+                    {{ article.author }}</a></span>
+                    <span>分类：<a href="{{ SITEURL }}/{{ article.category.url }}">{{ article.category }}</a></span>
+                    <span>时间：{{ article.locale_date }}</span>
+                </div>
+            </header>
+        </article>
+    </div>
+{% endfor %}
+    {% if DISQUS_SITENAME %}
+    <script type="text/javascript">
+        var disqus_shortname = '{{ DISQUS_SITENAME }}';
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+            (document.head || document.body).appendChild(s);
+        }());
+    </script>
+    {% endif %}
+{% endif %}
+{% endblock content %}
+
+{% if articles_page.has_next() or articles_page.has_previous() %}
+{% block footnote %}
+    {% include 'pagination.html' %}
+{% endblock %}
+{% endif %}

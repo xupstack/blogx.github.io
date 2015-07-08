@@ -1,0 +1,6 @@
+*.pyc
+srv.pid
+pelican.pid
+.DS_Store
+.idea/
+*.iml
