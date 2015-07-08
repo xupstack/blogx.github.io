@@ -36,7 +36,7 @@
 <h5>你的Spark程序是怎样执行的</h5>
 <p>一个Spark应用程序由一个driver进程和一组分散在集群节点上的executor进程组成。</p>
 <p>Driver进程负责控制任务的总体流程，executor进程负责以task的形式来执行任务，同时存储用户需要cache的数据。Driver进程和executor进程一般都是常驻在应用程序的整个运行周期中的（<a href="http://spark.apache.org/docs/1.2.0/job-scheduling.html#dynamic-resource-allocation">dynamic resource allocation</a>实现了动态分配executor）。每个executor都有一定数量的slots（槽位）来执行task，在executor的整个生命周期中多个task是可以并行执行的。虽然集群上的具体处理过程会跟所使用的集群管理系统有关（YARN、Mesos、Spark Standalone），但每个Spark应用程序都有driver和executor。</p>
-<p><img alt="pic1" src="/blog/images/how-to-tune-your-apache-spark-jobs-part-1-f1.png" /></p>
+<p><img alt="pic1" src="/images/how-to-tune-your-apache-spark-jobs-part-1-f1.png" /></p>
 <p>Job是应用程序执行层级中的第一层，在应用程序里面执行一个action操作即会触发启动一个对应的Spark job。Spark通过检查action所依赖的RDDs来制定执行计划，这个执行计划从“最远”的RDDs（即没有其他依赖的RDDs或者是已经cache的数据）开始，到最后一个需要生成action结果的RDD结束。</p>
 <p>执行计划会将job的transformation操作合并成stages。一个stage对应于一组执行同一段代码的task的集合，每个task处理数据的不同子集。每个stage都包含了一系列不需要shuffle所有数据就可以完成的transformations。</p>
 <p>Spark如何确定数据是否需要shuffle呢？一个RDD是由固定数量的分区组成了，每个分区又包含了一定数量的数据记录。对于窄依赖（比如map、filter），计算一个分区的数据只来源于其父RDD的某一个分区，每一条数据记录也只对应于其父RDD中的唯一一条数据记录（特殊的，coalesce这样的transformation虽然可以依赖父RDD的多个分区，但是子RDD的某一个分区只依赖父RDD的有限分区－不需要shuffle所有数据，我们仍然认为coalesce是一种窄依赖）。</p>

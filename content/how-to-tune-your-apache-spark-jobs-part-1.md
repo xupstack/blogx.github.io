@@ -24,7 +24,7 @@ OriginUrl: http://blog.cloudera.com/blog/2015/03/how-to-tune-your-apache-spark-j
 
 Driver进程负责控制任务的总体流程，executor进程负责以task的形式来执行任务，同时存储用户需要cache的数据。Driver进程和executor进程一般都是常驻在应用程序的整个运行周期中的（[dynamic resource allocation](http://spark.apache.org/docs/1.2.0/job-scheduling.html#dynamic-resource-allocation)实现了动态分配executor）。每个executor都有一定数量的slots（槽位）来执行task，在executor的整个生命周期中多个task是可以并行执行的。虽然集群上的具体处理过程会跟所使用的集群管理系统有关（YARN、Mesos、Spark Standalone），但每个Spark应用程序都有driver和executor。
 
-![pic1](/blog/images/how-to-tune-your-apache-spark-jobs-part-1-f1.png)
+![pic1](/images/how-to-tune-your-apache-spark-jobs-part-1-f1.png)
 
 Job是应用程序执行层级中的第一层，在应用程序里面执行一个action操作即会触发启动一个对应的Spark job。Spark通过检查action所依赖的RDDs来制定执行计划，这个执行计划从“最远”的RDDs（即没有其他依赖的RDDs或者是已经cache的数据）开始，到最后一个需要生成action结果的RDD结束。
 
