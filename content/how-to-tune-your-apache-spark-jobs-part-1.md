@@ -1,4 +1,4 @@
-Title: [翻译] Apache Spark性能调优（一）
+Title: Apache Spark性能调优（一）
 Slug: how-to-tune-your-apache-spark-jobs-part-1
 Date: 2015-06-16
 Category: Spark
@@ -145,3 +145,10 @@ Hive on Spark里join的内部实现都使用了这个操作。它同时还是[�
 你现在应该对影响Spark程序运行效率的基本因素有了较好的认识。在[下一节](/how-to-tune-your-apache-spark-jobs-part-2.html)，我们会继续从资源请求、并行和数据结构等方面介绍Spark的调优。
 
 原文作者Sandy Ryza是Cloudera的数据科学家，他同时还为Apache Hadoop和Apache Spark项目贡献代码。他是O’Reilly出版的[Advanced Analytics with Spark](http://shop.oreilly.com/product/0636920035091.do)一书的作者之一。
+
+<div class="meta_info">
+<p><span>[译文信息]</span></p>
+<p>原文作者: Sandy Ryza</p>
+<p>原作时间: 2015-03-09</p>
+<p>原作链接: http://blog.cloudera.com/blog/2015/03/how-to-tune-your-apache-spark-jobs-part-1/</p>
+</div>

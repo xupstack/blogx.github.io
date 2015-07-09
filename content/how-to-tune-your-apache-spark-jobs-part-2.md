@@ -1,4 +1,4 @@
-Title: [翻译] Apache Spark性能调优（二）
+Title: Apache Spark性能调优（二）
 Slug: how-to-tune-your-apache-spark-jobs-part-2
 Date: 2015-06-24
 Category: Spark
@@ -133,3 +133,10 @@ spark.serializer这个属性控制数据在这两种表现形式之间的转换�
 每次当你考虑将大量的数据以JSON格式存储时，你可以联想一下中世纪将要产生的冲突与对立，加拿大将要被大坝拦截的美丽河流，或者是将要在美国腹地建造的为了给你解析文件的CPU提供能源的核设施产生的核泄漏（译者注：原作者是诗人吗...）。同时，学习一点人际交往能力，以使你能够说服你的同僚和上级也不要使用JSON格式存储数据。
 
 原文作者Sandy Ryza是Cloudera的数据科学家，他同时还为Apache Hadoop和Apache Spark项目贡献代码。他是O’Reilly出版的[Advanced Analytics with Spark](http://shop.oreilly.com/product/0636920035091.do)一书的作者之一。
+
+<div class="meta_info">
+<p><span>[译文信息]</span></p>
+<p>原文作者: Sandy Ryza</p>
+<p>原作时间: 2015-03-30</p>
+<p>原作链接: http://blog.cloudera.com/blog/2015/03/how-to-tune-your-apache-spark-jobs-part-2/</p>
+</div>

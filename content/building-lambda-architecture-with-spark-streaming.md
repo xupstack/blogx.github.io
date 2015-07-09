@@ -1,4 +1,4 @@
-Title: [翻译] 用Spark Streaming搭建Lambda架构
+Title: 用Spark Streaming搭建Lambda架构
 Slug: building-lambda-architecture-with-spark-streaming
 Date: 2015-07-01
 Category: Spark
@@ -98,3 +98,10 @@ stateStream.foreachRDD(rdd => {
 感谢Hari Shreedharan, Ted Malaska, Grant Henke和Sean Owen的贡献和反馈。
 
 Gwen Shapira是Cloudera的软件工程师（之前是解决方案架构师）。她也是O’Reilly出版的Hadoop Application Architectures一书的作者之一。
+
+<div class="meta_info">
+<p><span>[译文信息]</span></p>
+<p>原文作者: Gwen Shapira (@gwenshap)</p>
+<p>原作时间: 2014-08-29</p>
+<p>原作链接: http://blog.cloudera.com/blog/2014/08/building-lambda-architecture-with-spark-streaming/</p>
+</div>

@@ -1,4 +1,4 @@
-Title: [翻译] 使用Apache Hadoop进行准实时数据处理的架构模式
+Title: 使用Apache Hadoop进行准实时数据处理的架构模式
 Slug: Architectural_Patterns_for_Near_Real-Time_Data_Processing_with_Apache_Hadoop
 Date: 2015-06-25
 Category: Spark
@@ -121,23 +121,8 @@ Flume的拦截器能够拦截一个或者一批消息，并且允许用户代码
 Architecutre](http://shop.oreilly.com/product/0636920033196.do "Hadoop Applications Architecture")一书的作者之一。
 
 
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<div class="meta_info">
+<p><span>[译文信息]</span></p>
+<p>原文作者: Ted Malaska</p>
+<p>原作链接: http://blog.cloudera.com/blog/2015/06/architectural-patterns-for-near-real-time-data-processing-with-apache-hadoop/</p>
+</div>

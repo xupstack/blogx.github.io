@@ -7,8 +7,9 @@ PELICAN=bin/pelican
 PELICANOPTS=
 
 BASEDIR=$(pwd)
-INPUTDIR=$BASEDIR/../content
-OUTPUTDIR=$BASEDIR/../
+PARENTDIR="$(cd "`dirname "$0"`"/..; pwd)"
+INPUTDIR=$PARENTDIR/content
+OUTPUTDIR=$PARENTDIR
 CONFFILE=$BASEDIR/pelicanconf.py
 
 ###

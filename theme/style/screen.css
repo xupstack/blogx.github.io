@@ -204,6 +204,16 @@ article .body h5 {
     margin: 20px 0;
 }
 
+.body .meta_info p {
+  line-height: 14px;
+  margin-bottom: 8px;
+  color: #999;
+}
+
+.body .meta_info p span {
+  font-weight: bold;
+}
+
 article .body p {
     color: #333;
     line-height: 21px;

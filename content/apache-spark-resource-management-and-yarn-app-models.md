@@ -1,4 +1,4 @@
-Title: [翻译] Apache Spark资源管理和YARN应用程序模型
+Title: Apache Spark资源管理和YARN应用程序模型
 Slug: apache-spark-resource-management-and-yarn-app-models
 Date: 2015-06-26
 Category: Spark
@@ -97,3 +97,10 @@ Spark支持以yarn-cluster和yarn-client两种模式在YARN上运行。明显的
 + [Cloudera的在YARN上运行Spark应用程序文档](http://www.cloudera.com/content/cloudera-content/cloudera-docs/CDH5/latest/CDH5-Installation-Guide/cdh5ig_running_spark_apps.html)
 
 原文作者Sandy Ryza是Cloudera的数据科学家，同时还是Apache Hadoop的贡献者。
+
+<div class="meta_info">
+<p><span>[译文信息]</span></p>
+<p>原文作者: Sandy Ryza</p>
+<p>原作时间: 2014-05-30</p>
+<p>原作链接: http://blog.cloudera.com/blog/2014/05/apache-spark-resource-management-and-yarn-app-models/</p>
+</div>

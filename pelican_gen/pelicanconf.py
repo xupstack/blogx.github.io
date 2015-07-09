@@ -6,7 +6,7 @@ AUTHOR = u'ectech'
 SITENAME = u'58\u5546\u4e1a\u6280\u672f\u56e2\u961f'
 SITEURL = ''
 
-OUTPUT_PATH = '../'
+#OUTPUT_PATH = '../'
 
 TIMEZONE = 'Asia/Shanghai'
 
