@@ -1,7 +1,19 @@
+Title: [翻译] 俺们公司的呆子们之：Eric Levine
+Slug: Meet the Nerds: Eric Levine
+Date: 2015-07-09
+Category: team
+Author: 黄兴
+Tags: Airbnb
+Type: 翻译
+OriginAuthor: Mike Curtis
+OriginUrl: http://nerds.airbnb.com/meet-nerds-eric-levine/
+
+
 ### 俺们公司的呆子们之：Eric Levine 
 
 
-你好，Eric Levine！Eric是我们的信用和安全组的一名工程主管。Eric告诉我们如何把坏人留在港湾里然后去土耳其的港湾(就是一个池子，但是叫“港湾”更好听些)游泳(译注：这是在开玩笑，好像是Eric去游泳，不带着同事……)。
+你好，Eric Levine！Eric是我们的信用和安全组的一名工程主管。Eric告诉我们如何把坏人留下然后去土耳其的港湾(就是一个池子，但是叫“港湾”更好听些)游泳。
+(译注：这貌似是在开玩笑……参考本文最后一段，貌似是去游泳时不叫着同事。不好理解，欢迎指正)
 
 ##### 你是怎么开始从事计算机科学的呢？
 
