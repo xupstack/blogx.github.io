@@ -64,7 +64,7 @@ OriginUrl: http://nerds.airbnb.com/aerosolve/
 
 ![pic7](/images/aerosolve-machine-learning-for-humans-7.gif)
 
-*图6 Aerosolve学习绘出彩画派风格的作品*
+*图6 Aerosolve学习绘出点彩画派风格的作品*
 
 <div class="meta_info">
 <p><span>[译文信息]</span></p>
