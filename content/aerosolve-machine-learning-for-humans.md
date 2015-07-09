@@ -1,6 +1,6 @@
 Title: Airbnb开源机器学习框架Aerosolve
 Slug: aerosolve-machine-learning-for-humans
-Date: 2015-07-03
+Date: 2015-07-08
 Category: Spark
 Author: 杨文华
 Tags: Aerosolve, Spark, Machine Learning, Airbnb
